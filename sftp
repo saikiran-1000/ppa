@@ -1,0 +1,32 @@
+import paramiko
+from app.config import Config
+
+class SFTPClient:
+
+    def __init__(self):
+        self.transport = None
+        self.sftp = None
+
+    def connect(self):
+        self.transport = paramiko.Transport(
+            (Config.SFTP_HOST, Config.SFTP_PORT)
+        )
+        self.transport.connect(
+            username=Config.SFTP_USERNAME,
+            password=Config.SFTP_PASSWORD
+        )
+        self.sftp = paramiko.SFTPClient.from_transport(self.transport)
+        print(" SFTP connection established")
+
+    def disconnect(self):
+        if self.sftp:
+            self.sftp.close()
+        if self.transport:
+            self.transport.close()
+        print("🔌 SFTP connection closed")
+
+    def list_files(self, remote_path):
+        return self.sftp.listdir(remote_path)
+
+    def download_file(self, remote_path, local_path):
+        self.sftp.get(remote_path, local_path)
