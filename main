@@ -1,0 +1,23 @@
+from app.sftp_client import SFTPClient
+from app.config import Config
+
+
+def main():
+    sftp_client = SFTPClient()
+
+    try:
+        sftp_client.connect()
+
+        vendor_path = f"{Config.SFTP_BASE_PATH}/Vendor"
+        folders = sftp_client.list_dir(vendor_path)
+
+        print(" Vendor folders:")
+        for folder in folders:
+            print(" -", folder)
+
+    finally:
+        sftp_client.close()
+
+
+if __name__ == "__main__":
+    main()
